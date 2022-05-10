@@ -1,0 +1,1397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="20.11.1.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>dev_close_window ()</l>
+<c></c>
+<c>*set fold and open window </c>
+<l>* directory:='imgs'</l>
+<c>** Config_LCD:=[Wfrequency,Hfrequency,Width_LCD,Height_LCD,WorkDist_LCD] //LCD 条纹频率 宽 高 工作距mm</c>
+<l>* Config_LCD:=[30,20,11,17,11,6,334,185,390]      //15.6inch</l>
+<l>directory:='2'</l>
+<c></c>
+<l>* directory:='1'</l>
+<c></c>
+<l>* directory:='3'</l>
+<l>* directory:='4'</l>
+<c></c>
+<c></c>
+<l>Config_LCD:=[20,12,5,15,12,10,698.4,392.4,390] //32 inch</l>
+<l>LoadAllImages3F (All_Images, Width_Images, Height_Images, directory)</l>
+<l>get_image_size (All_Images, ImageWidth, ImageHeight)</l>
+<l>ImageWidth:=ImageWidth[0]</l>
+<l>ImageHeight:=ImageHeight[0]</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_line_width (2)</l>
+<l>dev_set_color ('blue')</l>
+<c>**********************************************************************************</c>
+<c>*load images</c>
+<c>**********************************************************************************</c>
+<l>select_obj (All_Images, ImagesF30W, [1,2,3,4])</l>
+<l>select_obj (All_Images, ImagesF20W, 4+[1,2,3,4])</l>
+<l>select_obj (All_Images, ImagesF11W, 8+[1,2,3,4])  </l>
+<l>select_obj (All_Images, ImagesF17H, [13,14,15,16])</l>
+<l>select_obj (All_Images, ImagesF11H, 4+[13,14,15,16])</l>
+<l>select_obj (All_Images, ImagesF6H, 8+[13,14,15,16])  </l>
+<l>get_image_size (All_Images, Width, Height)</l>
+<l>Width:=Width[0]</l>
+<l>Height:=Height[0]</l>
+<c>**********************************************************************************</c>
+<c>*NormalDiffuseSpecular</c>
+<c>**********************************************************************************</c>
+<l>GetNormalDiffuseSpecular (ImagesF30W, ImagesF17H, Normal, Diffuse, Specular)</l>
+<l>scale_image_range (Normal, ImageScaled, 50, 200)</l>
+<l>dev_display (ImagesF30W)</l>
+<l>dev_display (ImagesF17H)</l>
+<l>dev_display (Normal)</l>
+<l>dev_display (Diffuse)</l>
+<l>dev_display (Specular)</l>
+<l>* stop()</l>
+<c>**********************************************************************************</c>
+<c>*Diff3Phase</c>
+<c>**********************************************************************************</c>
+<l>gen_rectangle1 (ROI, 0, 0, Height-1, Width-1)</l>
+<l>Diff3Phase (All_Images, ROI, PhaseX, PhaseY, SlopeX, SlopeY, CurX, CurY, CurMean, CurMax, CurMin, Config_LCD)</l>
+<c>*</c>
+<l>smallest_rectangle2 (ROI, Row1, Column1, Phi, Length1, Length2)</l>
+<l>gen_rectangle2 (sROI, Row1, Column1, Phi, Length1*0.5, Length2*0.5)</l>
+<c></c>
+<c>*****</c>
+<l>intensity (sROI, PhaseX, Mean2, Deviation2)</l>
+<l>dlt:=3</l>
+<l>scale_image_range (PhaseX, PhaseXScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>intensity (sROI, PhaseY, Mean2, Deviation2)</l>
+<l>scale_image_range (PhaseY, PhaseYScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<c>*</c>
+<l>intensity (sROI, CurMean, Mean2, Deviation2)</l>
+<l>dlt:=5</l>
+<l>scale_image_range (CurX, CurXScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>scale_image_range (CurY, CurYScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>scale_image_range (CurMean, CurMeanScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>scale_image_range (CurMax, CurMaxScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>scale_image_range (CurMin, CurMinScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* stop ()</l>
+<c>**********************************************************************************</c>
+<c>*display</c>
+<c>**********************************************************************************</c>
+<l>GenPseudoColor (PhaseXScaled, SlopeXColor)</l>
+<l>GenPseudoColor (PhaseYScaled, SlopeYColor)</l>
+<l>GenPseudoColor (CurXScaled, CurXColor)</l>
+<l>GenPseudoColor (CurYScaled, CurYColor)</l>
+<l>GenPseudoColor (CurMeanScaled, CurMeanColor)</l>
+<l>GenPseudoColor (CurMaxScaled, CurMaxColor)</l>
+<l>GenPseudoColor (CurMinScaled, CurMinColor)</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>dev_set_line_width (2)</l>
+<l>stop()</l>
+<l>dev_display (ImagesF30W)</l>
+<l>dev_display (ImagesF11H)</l>
+<c></c>
+<l>dev_display (Normal)</l>
+<l>dev_display (Diffuse)</l>
+<l>dev_display (Specular)</l>
+<c></c>
+<l>* dev_display (PhaseX)</l>
+<l>* dev_display (PhaseY)</l>
+<l>dev_display (PhaseXScaled)</l>
+<l>dev_display (PhaseYScaled)</l>
+<c></c>
+<l>dev_display (CurXScaled)</l>
+<l>dev_display (CurYScaled)</l>
+<c></c>
+<l>dev_display (CurMeanScaled)</l>
+<l>dev_display (CurMeanColor)</l>
+<l>dev_display (CurMaxScaled)</l>
+<l>dev_display (CurMaxColor)</l>
+<l>dev_display (CurMinScaled)</l>
+<l>dev_display (CurMinColor)</l>
+<l>stop()</l>
+<c>**********************************************************************************</c>
+<c>*保存halcon窗口图</c>
+<c>**********************************************************************************</c>
+<l>dev_get_window (WindowHandle)</l>
+<l>draw_rectangle1(WindowHandle, Row1, Column1, Row2, Column2)</l>
+<l>dev_set_draw ('margin')</l>
+<l>gen_rectangle1(DrawROI, Row1, Column1, Row2, Column2)</l>
+<l>windowScale:=1</l>
+<l>OutDirectory:=directory+'/0'</l>
+<l>file_exists (OutDirectory, FileExists)</l>
+<l>if (FileExists)</l>
+<l>else</l>
+<l>    make_dir (OutDirectory)</l>
+<l>endif</l>
+<l>gen_empty_region(NG)</l>
+<c></c>
+<l>SaveHalconWindowImage (ImagesF30W, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (ImagesF17H, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<l>SaveHalconWindowImage (ImageScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (Diffuse, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (Specular, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<l>SaveHalconWindowImage (PhaseXScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (PhaseYScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<l>SaveHalconWindowImage (CurXScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurYScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<l>SaveHalconWindowImage (CurMeanScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurMaxScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurMinScaled, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<c></c>
+<c></c>
+<l>SaveHalconWindowImage (SlopeXColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (SlopeYColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurXColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurYColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurMeanColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurMaxColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<l>SaveHalconWindowImage (CurMinColor, NG, DrawROI, OutDirectory, windowScale)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="LoadAllImages3F">
+<interface>
+<oo>
+<par name="All_Images" base_type="iconic" dimension="0"/>
+<par name="Width_Images" base_type="iconic" dimension="0"/>
+<par name="Height_Images" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="Files" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<c></c>
+<c></c>
+<l>list_image_files (Files, 'default', [], ImageFiles)</l>
+<l>tuple_regexp_select (ImageFiles, ['\\.(bmp|jpg)$','ignore_case'], ImageFiles)</l>
+<c></c>
+<l>for Index := 0 to |ImageFiles|-1 by 1</l>
+<l>parse_filename (ImageFiles[Index], BaseName, Extension, Directory)</l>
+<l>    tuple_strlen (BaseName, Len)</l>
+<l>    StartPos := Len-2</l>
+<l>    EndPos := Len-1</l>
+<l>    if (EndPos&lt;2)</l>
+<l>        continue</l>
+<l>    endif</l>
+<l>    tuple_substr (BaseName, StartPos, EndPos, Substring)</l>
+<l>    if (Substring='_1')</l>
+<l>        read_image (Image_1, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_2')</l>
+<l>        read_image (Image_2, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_3')</l>
+<l>        read_image (Image_3, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_4')</l>
+<l>        read_image (Image_4, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_5')</l>
+<l>        read_image (Image_5, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_6')</l>
+<l>        read_image (Image_6, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_7')</l>
+<l>        read_image (Image_7, ImageFiles[Index])</l>
+<l>    endif</l>
+<c></c>
+<l>    if (Substring='_8')</l>
+<l>        read_image (Image_8, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='_9')</l>
+<l>        read_image (Image_9, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='10')</l>
+<l>        read_image (Image_10, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='11')</l>
+<l>        read_image (Image_11, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='12')</l>
+<l>        read_image (Image_12, ImageFiles[Index])</l>
+<l>    endif</l>
+<c></c>
+<l>    if (Substring='13')</l>
+<l>        read_image (Image_13, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='14')</l>
+<l>        read_image (Image_14, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='15')</l>
+<l>        read_image (Image_15, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='16')</l>
+<l>        read_image (Image_16, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='17')</l>
+<l>        read_image (Image_17, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='18')</l>
+<l>        read_image (Image_18, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='19')</l>
+<l>        read_image (Image_19, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='20')</l>
+<l>        read_image (Image_20, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='21')</l>
+<l>        read_image (Image_21, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='22')</l>
+<l>        read_image (Image_22, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='23')</l>
+<l>        read_image (Image_23, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>    if (Substring='24')</l>
+<l>        read_image (Image_24, ImageFiles[Index])</l>
+<l>    endif</l>
+<l>endfor</l>
+<l>* stop ()</l>
+<c></c>
+<c>* Width_Images</c>
+<l>concat_obj (Image_1, Image_2, ObjectsConcat2)</l>
+<l>concat_obj (ObjectsConcat2, Image_3, ObjectsConcat3)</l>
+<l>concat_obj (ObjectsConcat3, Image_4, ObjectsConcat4)</l>
+<l>concat_obj (ObjectsConcat4, Image_5, ObjectsConcat5)</l>
+<l>concat_obj (ObjectsConcat5, Image_6, ObjectsConcat6)</l>
+<l>concat_obj (ObjectsConcat6, Image_7, ObjectsConcat7)</l>
+<l>concat_obj (ObjectsConcat7, Image_8, ObjectsConcat8)</l>
+<l>concat_obj (ObjectsConcat8, Image_9, ObjectsConcat9)</l>
+<l>concat_obj (ObjectsConcat9, Image_10, ObjectsConcat10)</l>
+<l>concat_obj (ObjectsConcat10, Image_11, ObjectsConcat11)</l>
+<l>concat_obj (ObjectsConcat11, Image_12, Width_Images)</l>
+<c>* Height_Images</c>
+<l>concat_obj (Image_13, Image_14, ObjectsConcat4)</l>
+<l>concat_obj (ObjectsConcat4, Image_15, ObjectsConcat5)</l>
+<l>concat_obj (ObjectsConcat5, Image_16, ObjectsConcat6)</l>
+<l>concat_obj (ObjectsConcat6, Image_17, ObjectsConcat7)</l>
+<l>concat_obj (ObjectsConcat7, Image_18, ObjectsConcat8)</l>
+<l>concat_obj (ObjectsConcat8, Image_19, ObjectsConcat9)</l>
+<l>concat_obj (ObjectsConcat9, Image_20, ObjectsConcat10)</l>
+<l>concat_obj (ObjectsConcat10, Image_21, ObjectsConcat11)</l>
+<l>concat_obj (ObjectsConcat11, Image_22, ObjectsConcat12)</l>
+<l>concat_obj (ObjectsConcat12, Image_23, ObjectsConcat13)</l>
+<l>concat_obj (ObjectsConcat13, Image_24, Height_Images)</l>
+<c>* All  Images</c>
+<l>concat_obj (Width_Images, Height_Images, All_Images)</l>
+<c></c>
+<l>return ()</l>
+<c></c>
+<c></c>
+<c></c>
+<l>dev_get_window (WindowHandle)</l>
+<l>draw_rectangle1 (WindowHandle, Row1, Column1, Row2, Column2)</l>
+<l>gen_rectangle1 (Rectangle, Row1, Column1+3, Row2, Column2)</l>
+<l>reduce_domain (ImageScaled, Rectangle, ImageReduced)</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_color ('red')</l>
+<l>dev_set_line_width (3)</l>
+<l>threshold (ImageReduced, Regions, 0, 143)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dilation_circle (Regions, RegionDilation, 5)</l>
+<l>move_region (RegionDilation, RegionMoved, 0, 0)</l>
+<c></c>
+<l>scale_image_range (Image_5, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := 'Out1.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_6, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := 'Out2.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_7, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := 'Out3.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_8, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := 'Out4.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<c></c>
+<c>* *********************</c>
+<l>dev_get_window (WindowHandle)</l>
+<l>draw_rectangle1 (WindowHandle, Row1, Column1, Row2, Column2)</l>
+<l>gen_rectangle1 (Rectangle, Row1, Column1+3, Row2, Column2)</l>
+<l>reduce_domain (ImageScaled, Rectangle, ImageReduced)</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_color ('red')</l>
+<l>dev_set_line_width (3)</l>
+<l>threshold (ImageReduced, Regions, 0, 105)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dilation_circle (Regions, RegionDilation, 5)</l>
+<l>move_region (RegionDilation, RegionMoved, -3, 0)</l>
+<c></c>
+<c></c>
+<l>scale_image_range (Image_17, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := '1Out1.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_18, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := '1Out2.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_19, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := '1Out3.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>scale_image_range (Image_20, ImageScaled, 0, 200)</l>
+<l>emphasize (ImageScaled, ImageEmphasize, 7, 7, 1)</l>
+<l>dev_display (ImageEmphasize)</l>
+<l>dev_display (RegionMoved)</l>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>ImageNewName := '1Out4.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<l>stop ()</l>
+<l>stop ()</l>
+<c></c>
+<c></c>
+<l>stop ()</l>
+<c></c>
+<l>stop ()</l>
+<l>stop ()</l>
+<l>stop ()</l>
+<c></c>
+</body>
+<docu id="LoadAllImages3F">
+<parameters>
+<parameter id="All_Images"/>
+<parameter id="Files"/>
+<parameter id="Height_Images"/>
+<parameter id="Width_Images"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="SaveHalconWindowImage">
+<interface>
+<io>
+<par name="ShowImage" base_type="iconic" dimension="0"/>
+<par name="DefectRegion" base_type="iconic" dimension="0"/>
+<par name="InputROI" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="OutDirectory" base_type="ctrl" dimension="0"/>
+<par name="windowScale" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<c></c>
+<c>* crop gradImage</c>
+<l>reduce_domain (ShowImage, InputROI, ImageReduced)</l>
+<l>get_domain (ImageReduced, Domain)</l>
+<l>area_center (Domain, Area, Row, Column)</l>
+<l>crop_domain (ImageReduced, ImagePart)</l>
+<l>get_image_size (ImagePart, Width, Height)</l>
+<l>hom_mat2d_identity (HomMat2DIdentity)</l>
+<l>hom_mat2d_translate_local (HomMat2DIdentity, -Row[0]+Height[0]/2, -Column[0]+Width[0]/2, HomMat2DTranslate)</l>
+<l>affine_trans_region (DefectRegion, RegionAffineTrans, HomMat2DTranslate, 'nearest_neighbor')</l>
+<l>* affine_trans_region (RegionUnion1, Line, HomMat2DTranslate, 'nearest_neighbor')</l>
+<c>* *display</c>
+<l>dev_clear_window ()</l>
+<l>dev_close_window ()</l>
+<l>get_image_size (ImagePart, Width1, Height1)</l>
+<l>* windowScale := 1.0</l>
+<l>dev_open_window (0, 0, Width1[0]*windowScale, Height1[0]*windowScale, 'black', WindowHandle)</l>
+<l>dev_display (ImagePart)</l>
+<l>dev_set_draw ('fill')</l>
+<l>dev_set_line_width (3)</l>
+<l>* dev_display (Line)</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_line_width (6)</l>
+<l>dev_set_color ('red')</l>
+<l>dev_display (RegionAffineTrans)</l>
+<l>dev_get_window (WindowHandle)</l>
+<c>* get</c>
+<l>dump_window_image (Image, WindowHandle)</l>
+<l>list_image_files (OutDirectory, 'default', [], ImageFiles)</l>
+<l>tuple_regexp_select (ImageFiles, ['\\.(bmp|jpg)$','ignore_case'], ImageFiles)</l>
+<l>currFileNum := |ImageFiles|</l>
+<l>ImageNewName := OutDirectory+'/'+currFileNum+'.bmp'</l>
+<l>write_image (Image, 'bmp', 0, ImageNewName)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="SaveHalconWindowImage">
+<parameters>
+<parameter id="DefectRegion"/>
+<parameter id="InputROI"/>
+<parameter id="OutDirectory"/>
+<parameter id="ShowImage"/>
+<parameter id="windowScale"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetNormalDiffuseSpecular">
+<interface>
+<io>
+<par name="WidthImages" base_type="iconic" dimension="0"/>
+<par name="HeightImages" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="Normal" base_type="iconic" dimension="0"/>
+<par name="Diffuse" base_type="iconic" dimension="0"/>
+<par name="Specular" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<l>convert_image_type (WidthImages, WidthImages, 'real')</l>
+<l>convert_image_type (HeightImages, HeightImages, 'real')</l>
+<l>select_obj (WidthImages, X1, 1)</l>
+<l>select_obj (WidthImages, X2, 2)</l>
+<l>select_obj (WidthImages, X3, 3)</l>
+<l>select_obj (WidthImages, X4, 4)</l>
+<l>select_obj (HeightImages, Y1, 1)</l>
+<l>select_obj (HeightImages, Y2, 2)</l>
+<l>select_obj (HeightImages, Y3, 3)</l>
+<l>select_obj (HeightImages, Y4, 4)</l>
+<c>**********************************************************************************</c>
+<c>*Normal image</c>
+<c>**********************************************************************************</c>
+<l>add_image (X1, X3, X13, 0.5, 0)</l>
+<l>add_image (X2, X4, X24, 0.5, 0)</l>
+<l>add_image (X13, X24, NormalX, 0.5, 0)</l>
+<c>*</c>
+<l>add_image (Y1, Y3, Y13, 0.5, 0)</l>
+<l>add_image (Y2, Y4, Y24, 0.5, 0)</l>
+<l>add_image (Y13, Y24, NormalY, 0.5, 0)</l>
+<c>*</c>
+<l>add_image (NormalX, NormalY, Normal, 0.5, 0)</l>
+<l>scale_image_max (Normal, Normal)</l>
+<c>**********************************************************************************</c>
+<c>*Diffuse </c>
+<c>**********************************************************************************</c>
+<c>*X</c>
+<l>min_image (X1, NormalX, ImageMin1)</l>
+<l>min_image (X3, NormalX, ImageMin3)</l>
+<l>min_image (ImageMin1, ImageMin3, ImageMin13)</l>
+<c></c>
+<l>min_image (X2, NormalX, ImageMin2)</l>
+<l>min_image (X4, NormalX, ImageMin4)</l>
+<l>min_image (ImageMin2, ImageMin4, ImageMin24)</l>
+<c></c>
+<l>min_image (ImageMin13, ImageMin24, ImageMinX)</l>
+<c>* Y</c>
+<l>min_image (Y1, NormalY, ImageMin1)</l>
+<l>min_image (Y3, NormalY, ImageMin3)</l>
+<l>min_image (ImageMin1, ImageMin3, ImageMin13)</l>
+<c></c>
+<l>min_image (Y2, NormalY, ImageMin2)</l>
+<l>min_image (Y4, NormalY, ImageMin4)</l>
+<l>min_image (ImageMin2, ImageMin4, ImageMin24)</l>
+<c></c>
+<l>min_image (ImageMin13, ImageMin24, ImageMinY)</l>
+<c></c>
+<l>add_image (ImageMinX, ImageMinY, Diffuse, 0.5, 0)</l>
+<l>* min_image (ImageMinX, ImageMinY, Diffuse)</l>
+<l>scale_image_max (Diffuse, Diffuse)</l>
+<c>**********************************************************************************</c>
+<c>*Specular </c>
+<c>**********************************************************************************</c>
+<l>convert_image_type (WidthImages, WidthImages, 'byte')</l>
+<l>convert_image_type (HeightImages, HeightImages, 'byte')</l>
+<l>select_obj (WidthImages, X1, 1)</l>
+<l>select_obj (WidthImages, X2, 2)</l>
+<l>select_obj (WidthImages, X3, 3)</l>
+<l>select_obj (WidthImages, X4, 4)</l>
+<l>select_obj (HeightImages, Y1, 1)</l>
+<l>select_obj (HeightImages, Y2, 2)</l>
+<l>select_obj (HeightImages, Y3, 3)</l>
+<l>select_obj (HeightImages, Y4, 4)</l>
+<c>*</c>
+<l>sub_image (X1, X3, X1_X3, 1, 0)</l>
+<l>sub_image (X2, X4, X2_X4, 1, 0)</l>
+<l>sub_image (X3, X1, X3_X1, 1, 0)</l>
+<l>sub_image (X4, X2, X4_X2, 1, 0)</l>
+<l>add_image (X1_X3, X3_X1, X13, 0.5, 0)</l>
+<l>add_image (X2_X4, X4_X2, X24, 0.5, 0)</l>
+<l>add_image (X13, X24, XX, 0.5, 0)</l>
+<c>*</c>
+<l>sub_image (Y1, Y3, Y1_Y3, 1, 0)</l>
+<l>sub_image (Y2, Y4, Y2_Y4, 1, 0)</l>
+<l>sub_image (Y3, Y1, Y3_Y1, 1, 0)</l>
+<l>sub_image (Y4, Y2, Y4_Y2, 1, 0)</l>
+<l>add_image (Y1_Y3, Y3_Y1, Y13, 0.5, 0)</l>
+<l>add_image (Y2_Y4, Y4_Y2, Y24, 0.5, 0)</l>
+<l>add_image (Y13, Y24, YY, 0.5, 0)</l>
+<c></c>
+<c></c>
+<l>* max_image (XX, YY, Specular)</l>
+<l>add_image (XX, YY, Specular, 0.5, 0)</l>
+<l>scale_image_max (Specular, Specular)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetNormalDiffuseSpecular">
+<parameters>
+<parameter id="Diffuse"/>
+<parameter id="HeightImages"/>
+<parameter id="Normal"/>
+<parameter id="Specular"/>
+<parameter id="WidthImages"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="Diff3Phase">
+<interface>
+<io>
+<par name="All_Images" base_type="iconic" dimension="0"/>
+<par name="ROI" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="PhaseX" base_type="iconic" dimension="0"/>
+<par name="PhaseY" base_type="iconic" dimension="0"/>
+<par name="SlopeX" base_type="iconic" dimension="0"/>
+<par name="SlopeY" base_type="iconic" dimension="0"/>
+<par name="CurX" base_type="iconic" dimension="0"/>
+<par name="CurY" base_type="iconic" dimension="0"/>
+<par name="CurMean" base_type="iconic" dimension="0"/>
+<par name="CurMax" base_type="iconic" dimension="0"/>
+<par name="CurMin" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="Config_LCD" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>get_image_size (All_Images, Width, Height)</l>
+<l>Width := Width[0]</l>
+<l>Height := Height[0]</l>
+<c>** Config_LCD:=[Wfrequency,Hfrequency,Width_LCD,Height_LCD,WorkDist_LCD] //LCD 条纹频率 宽 高 工作距mm</c>
+<l>Config_LCD:=real(Config_LCD)</l>
+<l>Wfrequency:=Config_LCD[0:2]</l>
+<l>Hfrequency:=Config_LCD[3:5]</l>
+<l>Width_LCD:=Config_LCD[6]</l>
+<l>Height_LCD:=Config_LCD[7]</l>
+<l>WorkDist_LCD:=Config_LCD[8]</l>
+<l>PX:=Width_LCD/Wfrequency[0]</l>
+<l>PY:=Height_LCD/Hfrequency[0]</l>
+<l>P:=0.5*(PX+PY)</l>
+<l>M:=P/(WorkDist_LCD*4*rad(180))</l>
+<l>* Mx:=1</l>
+<c>**********************************************************************************</c>
+<c>*load images </c>
+<c>**********************************************************************************</c>
+<l>select_obj (All_Images, ImagesF30W, [1,2,3,4])</l>
+<l>select_obj (All_Images, ImagesF20W, 4+[1,2,3,4])</l>
+<l>select_obj (All_Images, ImagesF11W, 8+[1,2,3,4])  </l>
+<l>select_obj (All_Images, ImagesF17H, [13,14,15,16])</l>
+<l>select_obj (All_Images, ImagesF11H, 4+[13,14,15,16])</l>
+<l>select_obj (All_Images, ImagesF6H, 8+[13,14,15,16])  </l>
+<c>**********************************************************************************</c>
+<c>*四步相移</c>
+<c>**********************************************************************************</c>
+<l>PhaseShift4 (ImagesF30W, WrapPhaseF30W)</l>
+<l>PhaseShift4 (ImagesF20W, WrapPhaseF20W)</l>
+<l>PhaseShift4 (ImagesF11W, WrapPhaseF11W)</l>
+<l>PhaseShift4 (ImagesF17H, WrapPhaseF17H)</l>
+<l>PhaseShift4 (ImagesF11H, WrapPhaseF11H)</l>
+<l>PhaseShift4 (ImagesF6H, WrapPhaseF6H)</l>
+<c>**********************************************************************************</c>
+<c>*三频外插</c>
+<c>**********************************************************************************</c>
+<l>Unwrap3 (WrapPhaseF30W, WrapPhaseF20W, WrapPhaseF11W, ROI, UnwrapW, Wfrequency)</l>
+<l>Unwrap3 (WrapPhaseF17H, WrapPhaseF11H, WrapPhaseF6H, ROI, UnwrapH, Hfrequency)</l>
+<c>**********************************************************************************</c>
+<c>*reduce median_image</c>
+<c>**********************************************************************************</c>
+<l>reduce_domain (UnwrapH, ROI, H_UnwrapReduce)</l>
+<l>reduce_domain (UnwrapW, ROI, W_UnwrapReduce)</l>
+<c>*</c>
+<l>add_image (W_UnwrapReduce, W_UnwrapReduce, GradX, 0.5, 0)</l>
+<l>add_image (H_UnwrapReduce, H_UnwrapReduce, GradY,-0.5, 0)</l>
+<l>median_image (GradX, PhaseX, 'circle', 3, 'mirrored')</l>
+<l>* scale_image_range (PhaseX, ImageScaled, 50, 70)</l>
+<l>median_image (GradY, PhaseY, 'circle', 3, 'mirrored')</l>
+<c>**********************************************************************************</c>
+<c>*GetBackground</c>
+<c>**********************************************************************************</c>
+<l>GetBackground (PhaseX, PhaseY, ROI, BX, BY)</l>
+<c></c>
+<c>**********************************************************************************</c>
+<c>*Slope</c>
+<c>**********************************************************************************</c>
+<l>sub_image (BX, PhaseX, SlopeX1, 1, 0)</l>
+<l>scale_image_range (SlopeX1, ImageScaled1, -10, 3)</l>
+<l>sub_image (BY, PhaseY, SlopeY1, 1, 0)</l>
+<l>scale_image_range (SlopeY1, ImageScaled1, -10, 3)</l>
+<c></c>
+<c></c>
+<c>*</c>
+<l>sub_image (BY, PhaseY, SlopeY1, 1, 0)</l>
+<l>smallest_rectangle2 (ROI, Row1, Column1, Phi, Length1, Length2)</l>
+<l>gen_rectangle2 (sROI, Row1, Column1, Phi, Length1*0.5, Length2*0.5)</l>
+<l>intensity (sROI, SlopeX1, MeanX, DeviationX)</l>
+<l>intensity (sROI, SlopeY1, MeanY, DeviationY)</l>
+<l>add_image (SlopeX1, SlopeX1, SlopeX, 0.5*M, -MeanX*M)</l>
+<l>add_image (SlopeY1, SlopeY1, SlopeY, 0.5*M, -MeanY*M)</l>
+<l>intensity (sROI, SlopeX, MeanX, DeviationX)</l>
+<l>intensity (sROI, SlopeY, MeanY, DeviationY)</l>
+<c>**********************************************************************************</c>
+<c>*CurBySlope</c>
+<c>**********************************************************************************</c>
+<l>* CurBySlopes (PhaseX, PhaseY, CurX, CurY, CurMean, CurMax, CurMin, 3)</l>
+<l>CurBySlopes (SlopeX, SlopeY, CurX, CurY, CurMean, CurMax, CurMin, 3)</l>
+<l>* intensity (sROI, CurMean, Mean2, Deviation2)</l>
+<l>* dlt:=10</l>
+<l>* scale_image_range (CurX, CurXScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* scale_image_range (CurY, CurYScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* scale_image_range (CurMean, CurMeanScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* scale_image_range (CurMax, CurMaxScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* scale_image_range (CurMin, CurMinScaled, Mean2-Deviation2*dlt, Mean2+Deviation2*dlt)</l>
+<l>* sub_image (CurMinScaled, CurMaxScaled, ImageSub, 1, 128)</l>
+<l>* stop ()</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="Diff3Phase">
+<parameters>
+<parameter id="All_Images"/>
+<parameter id="Config_LCD"/>
+<parameter id="CurMax"/>
+<parameter id="CurMean"/>
+<parameter id="CurMin"/>
+<parameter id="CurX"/>
+<parameter id="CurY"/>
+<parameter id="PhaseX"/>
+<parameter id="PhaseY"/>
+<parameter id="ROI"/>
+<parameter id="SlopeX"/>
+<parameter id="SlopeY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="Unwrap3">
+<interface>
+<io>
+<par name="WrapPhase1" base_type="iconic" dimension="0"/>
+<par name="WrapPhase2" base_type="iconic" dimension="0"/>
+<par name="WrapPhase3" base_type="iconic" dimension="0"/>
+<par name="ROI" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="Unwrap1" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="frequency" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<c></c>
+<c></c>
+<l>add_image (WrapPhase1, WrapPhase1, Phase1, 0.5, rad(180))</l>
+<l>add_image (WrapPhase2, WrapPhase2, Phase2, 0.5, rad(180))</l>
+<l>add_image (WrapPhase3, WrapPhase3, Phase3, 0.5, rad(180))</l>
+<c></c>
+<l>reduce_domain (Phase1, ROI, Phase1)</l>
+<l>reduce_domain (Phase2, ROI, Phase2)</l>
+<l>reduce_domain (Phase3, ROI, Phase3)</l>
+<c></c>
+<l>sub_image (Phase1, Phase2, Phase12, 1, 0)</l>
+<l>threshold (Phase12, Region, -255, 0)</l>
+<c>* Phase1&lt;Phase2    +2pi</c>
+<l>get_region_points (Region, Rows, Columns)</l>
+<l>tuple_length (Rows, Length)</l>
+<l>tuple_gen_const (Length, rad(360), TwoPiTuple)</l>
+<l>get_grayval (Phase12, Rows, Columns, Grayval)</l>
+<l>tuple_add (TwoPiTuple, Grayval, Add2Pi)</l>
+<l>set_grayval (Phase12, Rows, Columns, Add2Pi)</l>
+<c>* ***********</c>
+<l>sub_image (Phase2, Phase3, Phase23, 1, 0)</l>
+<l>threshold (Phase23, Region, -255, 0)</l>
+<c>* Phase1&lt;Phase2    +2pi</c>
+<l>get_region_points (Region, Rows, Columns)</l>
+<l>tuple_length (Rows, Length)</l>
+<l>tuple_gen_const (Length, rad(360), TwoPiTuple)</l>
+<l>get_grayval (Phase23, Rows, Columns, Grayval)</l>
+<l>tuple_add (TwoPiTuple, Grayval, Add2Pi)</l>
+<l>set_grayval (Phase23, Rows, Columns, Add2Pi)</l>
+<c>* ***********</c>
+<l>sub_image (Phase12, Phase23, Phase123, 1, 0)</l>
+<l>threshold (Phase123, Region, -255, 0)</l>
+<l>* threshold (Phase123, Region, -255, -rad(180))</l>
+<c>* Phase1&lt;Phase2    +2pi</c>
+<l>get_region_points (Region, Rows, Columns)</l>
+<l>tuple_length (Rows, Length)</l>
+<l>tuple_gen_const (Length, rad(360), TwoPiTuple)</l>
+<l>get_grayval (Phase123, Rows, Columns, Grayval)</l>
+<l>tuple_add (TwoPiTuple, Grayval, Add2Pi)</l>
+<l>set_grayval (Phase123, Rows, Columns, Add2Pi)</l>
+<l>* mean_image (Phase123, MeanPhase123, 9, 30)</l>
+<l>* stop ()</l>
+<c>* *********************************************************</c>
+<c>* 解包裹Unwrap1  * frequency := [70,64,59]</c>
+<l>T1 := 1.0/frequency[0]</l>
+<l>T2 := 1.0/frequency[1]</l>
+<l>T3 := 1.0/frequency[2]</l>
+<l>T12 := T1*T2/(T2-T1)</l>
+<l>T23 := T2*T3/(T3-T2)</l>
+<l>R1 := 1.0/T12</l>
+<l>R2 := T12/T1</l>
+<l>get_image_size (WrapPhase1, Width, Height)</l>
+<l>gen_rectangle1 (AllRectangle, 0, 0, Height, Width)</l>
+<c>* Unwrap1</c>
+<c>* 求K1</c>
+<l>add_image (Phase123, Phase123, ImageResult1, 0.5*R1, 0)</l>
+<l>sub_image (ImageResult1, Phase12, K1, 1.0/rad(360), 0)</l>
+<c>* int</c>
+<c></c>
+<l>get_domain (WrapPhase1, Domain)</l>
+<l>intersection (Domain, ROI, AllRectangle)</l>
+<l>get_region_points (AllRectangle, Rows1, Columns1)</l>
+<c>*</c>
+<l>get_grayval (K1, Rows1, Columns1, Grayval1)</l>
+<l>tuple_round (Grayval1, Round)</l>
+<l>* Int:=int(Grayval1)</l>
+<l>copy_image (K1, IntK1)</l>
+<l>set_grayval (IntK1, Rows1, Columns1, Round)</l>
+<c>* 求K2</c>
+<l>Remainder := R2-int(R2)</l>
+<l>add_image (K1, K1, K1Remainder, 0.5*Remainder*rad(360), 0)</l>
+<l>add_image (Phase12, Phase12, R2Phase12, 0.5*R2, 0)</l>
+<l>add_image (R2Phase12, K1Remainder, R2P12AddK1Rem, 1, 0)</l>
+<l>sub_image (R2P12AddK1Rem, Phase1, K2, 1.0/rad(360), 0)</l>
+<c>*</c>
+<l>get_grayval (K2, Rows1, Columns1, Grayval1)</l>
+<l>tuple_round (Grayval1, Round)</l>
+<l>copy_image (K2, IntK2)</l>
+<l>set_grayval (IntK2, Rows1, Columns1, Round)</l>
+<c>* 求K</c>
+<l>add_image (IntK1, IntK1, K1FixR2, 0.5*int(R2), 0)</l>
+<l>add_image (K1FixR2, IntK2, K, 1, 0)</l>
+<c>* 对phase1相位展开</c>
+<l>add_image (K, K, K2pi, 0.5*rad(360), 0)</l>
+<l>add_image (Phase1, K2pi, Unwrap1, 1, 0)</l>
+<c>* *********************************************************</c>
+<c></c>
+<l>* stop ()</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="Unwrap3">
+<parameters>
+<parameter id="ROI"/>
+<parameter id="Unwrap1"/>
+<parameter id="WrapPhase1"/>
+<parameter id="WrapPhase2"/>
+<parameter id="WrapPhase3"/>
+<parameter id="frequency"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="CurBySlopes">
+<interface>
+<io>
+<par name="Sx" base_type="iconic" dimension="0"/>
+<par name="Sy" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="CurX" base_type="iconic" dimension="0"/>
+<par name="CurY" base_type="iconic" dimension="0"/>
+<par name="CurMean" base_type="iconic" dimension="0"/>
+<par name="CurMax" base_type="iconic" dimension="0"/>
+<par name="CurMin" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="Sigma" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>convert_image_type (Sx, Sx, 'real')</l>
+<l>convert_image_type (Sy, Sy, 'real')</l>
+<l>* derivate_vector_field (Gradient, CurMean, 3, 'mean_curvature')</l>
+<l>* derivate_vector_field (Gradient, CurGauss, 3, 'gauss_curvature')</l>
+<c></c>
+<l>* real_to_vector_field (Sx, Sy, Gradient, 'vector_field_relative')</l>
+<c></c>
+<l>* vector_field_to_real (Gradient, RowImage_Cam1, ColImage_Cam1)</l>
+<l>mean_image (Sy, RowMean, 3, 3)</l>
+<l>mean_image (Sx, ColMean, 3, 3)</l>
+<c></c>
+<l>* sobel_amp (ColMean, CurX, 'x', 3)</l>
+<l>* sobel_amp (RowMean, CurY, 'y', 3)</l>
+<l>* sobel_amp (ColMean, CXCY, 'y', 3)</l>
+<l>* sobel_amp (RowMean, CYCX, 'x', 3)</l>
+<l>* Sigma:=3</l>
+<l>derivate_gauss (ColMean, CurX, Sigma, 'x')</l>
+<l>derivate_gauss (RowMean, CurY, Sigma, 'y')</l>
+<l>derivate_gauss (ColMean, CXCY, Sigma, 'y')</l>
+<l>derivate_gauss (RowMean, CYCX, Sigma, 'x')</l>
+<c></c>
+<c>* *******************CurMean</c>
+<l>mult_image (ColMean, ColMean, E, 1, 1)</l>
+<l>mult_image (RowMean, RowMean, G, 1, 1)</l>
+<l>mult_image (ColMean, RowMean, F, 1, 0)</l>
+<c></c>
+<l>add_image (E, G, D, 1, -1)</l>
+<l>sqrt_image (D, SqrtImage)</l>
+<l>div_image (CurX, SqrtImage, L, 1, 0)</l>
+<l>div_image (CXCY, SqrtImage, M, 1, 0)</l>
+<l>div_image (CurY, SqrtImage, N, 1, 0)</l>
+<c>* *</c>
+<l>mult_image (E, G, EG, 1, 0)</l>
+<l>mult_image (E, N, NE, 1, 0)</l>
+<l>mult_image (L, G, GL, 1, 0)</l>
+<l>mult_image (F, M, _2FM, -2, 0)</l>
+<l>pow_image (F, F2, 2)</l>
+<c></c>
+<l>add_image (NE, GL, EGandGL, 1, 0)</l>
+<l>add_image (EGandGL, _2FM, CC, 1, 0)</l>
+<c></c>
+<l>sub_image (EG, F2, DD, 1, 0)</l>
+<l>div_image (CC, DD, CurMean, 0.5, 0)</l>
+<l>* derivate_vector_field (Gradient, CurMean1, 3, 'mean_curvature')</l>
+<l>* scale_image_range (CurMean, CurMean0, -0.001, 0.001)</l>
+<l>* scale_image_range (CurMean1, CurMean11, -0.001, 0.001)</l>
+<c>* *******************CurGausss</c>
+<l>mult_image (L, N, LN, 1, 0)</l>
+<l>pow_image (M, M2, 2)</l>
+<l>sub_image (LN, M2, LN_M2, 1, 0)</l>
+<l>div_image (LN_M2, DD, CurGauss, 1, 0)</l>
+<l>* derivate_vector_field (Gradient, CurGausss1, 3, 'gauss_curvature')</l>
+<l>* scale_image_range (CurGauss, CurGausss0, -0.000006, 0.000006)</l>
+<l>* scale_image_range (CurGausss1, CurGausss11, -0.000006, 0.000006)</l>
+<c></c>
+<c>* *******************Cmax  Cmin</c>
+<l>pow_image (CurMean, b2, 2)</l>
+<l>sub_image (b2, CurGauss, b2_a, 1, 0)</l>
+<l>sqrt_image (b2_a, sqrt_b2_a)</l>
+<l>add_image (CurMean, sqrt_b2_a, CurMax, 1, 0)</l>
+<l>sub_image (CurMean, sqrt_b2_a, CurMin, 1, 0)</l>
+<l>* scale_image_range (CurMax, CurMax1, -0.005, 0.005)</l>
+<l>* scale_image_range (CurMin, CurMin1, -0.005, 0.005)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="CurBySlopes">
+<parameters>
+<parameter id="CurMax"/>
+<parameter id="CurMean"/>
+<parameter id="CurMin"/>
+<parameter id="CurX"/>
+<parameter id="CurY"/>
+<parameter id="Sigma"/>
+<parameter id="Sx"/>
+<parameter id="Sy"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="PhaseShift4">
+<interface>
+<io>
+<par name="Images" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="WrapPhase" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<l>convert_image_type (Images, Images, 'real')</l>
+<c>* *********************************************************************************</c>
+<c></c>
+<c>* I4=cos(a+0/2*pi)</c>
+<c>* I1=cos(a+1/2*pi)</c>
+<c>* I2=cos(a+2/2*pi)</c>
+<c>* I3=cos(a+3/2*pi)</c>
+<l>select_obj (Images, I1, 2)</l>
+<l>select_obj (Images, I2, 1)</l>
+<l>select_obj (Images, I3, 4)</l>
+<l>select_obj (Images, I4, 3)</l>
+<l>sub_image (I4, I2, ImageSub42, 1, 0)</l>
+<l>sub_image (I1, I3, ImageSub13, 1, 0)</l>
+<l>atan2_image (ImageSub42, ImageSub13, WrapPhase)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="PhaseShift4">
+<parameters>
+<parameter id="Images"/>
+<parameter id="WrapPhase"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetBackground">
+<interface>
+<io>
+<par name="SX" base_type="iconic" dimension="0"/>
+<par name="SY" base_type="iconic" dimension="0"/>
+<par name="ROI" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="BX" base_type="iconic" dimension="0"/>
+<par name="BY" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<l>area_center (ROI, Area, Row, Column)</l>
+<c></c>
+<l>smallest_rectangle1 (ROI, Row1, Column1, Row2, Column2)</l>
+<l>gen_rectangle1 (BackgroundX, Row, Column1, Row, Column2)</l>
+<l>gen_rectangle1 (BackgroundY, Row1, Column, Row2, Column)</l>
+<l>get_region_points (BackgroundX, Rows3, Columns3)</l>
+<l>get_region_points (BackgroundY, Rows1, Columns1)</l>
+<l>get_grayval (SX, Rows3, Columns3, GrayvalX)</l>
+<l>get_grayval (SY, Rows1, Columns1, GrayvalY)</l>
+<l>FitYupleLine (Columns3, GrayvalX, NewX)</l>
+<l>FitYupleLine (Rows1, GrayvalY, NewY)</l>
+<l>ImageH := Row2-Row1+1</l>
+<l>ImageW := Column2-Column1+1</l>
+<l>create_matrix (ImageW, ImageH, 0.0, AllGray)</l>
+<l>create_matrix (ImageH, 1, 1.0, OnesH)</l>
+<l>create_matrix (ImageH, 1, 1.0, MatH)</l>
+<l>create_matrix (1, ImageW, 1.0, OnesW)</l>
+<l>create_matrix (1, ImageW, 1.0, MatW)</l>
+<l>set_full_matrix (MatW, NewX)</l>
+<l>set_full_matrix (MatH, NewY)</l>
+<c></c>
+<l>mult_matrix (OnesH, MatW, 'AB', Mat_W_Unwrap)</l>
+<l>mult_matrix (MatH, OnesW, 'AB', Mat_H_Unwrap)</l>
+<l>get_full_matrix (Mat_W_Unwrap, ValuesW)</l>
+<l>get_full_matrix (Mat_H_Unwrap, ValuesH)</l>
+<l>gen_rectangle1 (Rectangle, 0, 0, ImageH-1, ImageW-1)</l>
+<l>get_region_points (Rectangle, Rows, Columns)</l>
+<l>gen_image_const (SinImageW, 'real', ImageW, ImageH)</l>
+<l>set_grayval (SinImageW, Rows, Columns, ValuesW)</l>
+<l>gen_image_const (SinImageH, 'real', ImageW, ImageH)</l>
+<l>set_grayval (SinImageH, Rows, Columns, ValuesH)</l>
+<c></c>
+<c>* *</c>
+<l>get_region_points (ROI, Rows4, Columns4)</l>
+<l>copy_image (SX, BX)</l>
+<l>copy_image (SY, BY)</l>
+<l>set_grayval (BX, Rows4, Columns4, ValuesW)</l>
+<l>set_grayval (BY, Rows4, Columns4, ValuesH)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetBackground">
+<parameters>
+<parameter id="BX"/>
+<parameter id="BY"/>
+<parameter id="ROI"/>
+<parameter id="SX"/>
+<parameter id="SY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="UnwrapX4">
+<interface>
+<io>
+<par name="WrapPhaseW" base_type="iconic" dimension="0"/>
+</io>
+</interface>
+<body>
+<l>get_image_size (WrapPhaseW, Width, Height)</l>
+<c>*相位展开*******************************************************************************************</c>
+<l>copy_image (WrapPhaseW, SX0)</l>
+<l>ThresPhase:=rad(0)</l>
+<l>threshold (SX0, Regions, -rad(361), -ThresPhase)</l>
+<l>opening_circle (Regions, Left1, 35)</l>
+<l>fill_up (Left1, Left1)</l>
+<l>threshold (SX0, Regions, ThresPhase, rad(361))</l>
+<l>opening_circle (Regions, Right1, 35)</l>
+<l>fill_up (Right1, Right1)</l>
+<c>****</c>
+<l>reduce_domain (SX0, Left1, LeftReduced)</l>
+<l>threshold (LeftReduced, LeftSub, ThresPhase+rad(90), rad(361))</l>
+<l>get_region_points (LeftSub, Rows1, Columns1)</l>
+<l>get_grayval (WrapPhaseW, Rows1, Columns1, Grayval1)</l>
+<l>set_grayval (SX0, Rows1, Columns1, Grayval1-2*rad(180))   </l>
+<l>reduce_domain (SX0, Right1,RightReduced)</l>
+<l>threshold (RightReduced, RightSub, -rad(361),ThresPhase-rad(90))</l>
+<l>get_region_points (RightSub, Rows1, Columns1)</l>
+<l>get_grayval (WrapPhaseW, Rows1, Columns1, Grayval1)</l>
+<l>set_grayval (SX0, Rows1, Columns1, Grayval1+2*rad(180)) </l>
+<c>******************************************</c>
+<c>*</c>
+<l>threshold (SX0, Regions, -rad(361), -ThresPhase)</l>
+<l>closing_circle (Regions, RegionClosing, 35)</l>
+<l>connection (RegionClosing, ConnectedRegions)</l>
+<l>fill_up (ConnectedRegions, RegionFillUp)</l>
+<l>select_shape (RegionFillUp, Left, 'area', 'and', 50000, Width*Height)</l>
+<l>area_center (Left, AreaLeft, RowLeft, ColumnLeft)</l>
+<l>union1 (Left, Left1)</l>
+<l>reduce_domain (SX0, Left1, ImageReduced1)</l>
+<l>threshold (ImageReduced1, LeftNull, ThresPhase+rad(90), rad(361))</l>
+<c></c>
+<c>*</c>
+<l>threshold (SX0, Regions, ThresPhase, rad(361))</l>
+<l>closing_circle (Regions, RegionClosing, 35)</l>
+<l>connection (RegionClosing, ConnectedRegions)</l>
+<l>fill_up (ConnectedRegions, RegionFillUp)</l>
+<l>select_shape (RegionFillUp, Right, 'area', 'and', 50000, Width*Height)</l>
+<l>area_center (Right, Area, RowRight, ColumnRight)</l>
+<l>union1 (Right, Right1)</l>
+<l>reduce_domain (SX0, Right1, ImageReduced1)</l>
+<l>threshold (ImageReduced1, RightNull, -rad(361), -ThresPhase-rad(90))</l>
+<c>*</c>
+<l>* dev_display (SX0)</l>
+<l>* dev_display (LeftNull)</l>
+<l>* dev_display (SX0)</l>
+<l>* dev_display (RightNull)</l>
+<c>    </c>
+<l>NumLfet:=|ColumnLeft|</l>
+<l>NumRight:=|ColumnRight|</l>
+<l>NumRegion:=max([NumLfet,NumRight])</l>
+<l>copy_image (SX0, SX)</l>
+<l>Index:=0</l>
+<l>for Index:=0 to NumRegion-2 by 1</l>
+<l>    select_obj (Left, LeftSelected, Index+1)</l>
+<l>    select_obj (Right, RightSelected, Index+1)</l>
+<l>    union2 (LeftSelected, RightSelected, RegionUnion1)</l>
+<l>    fill_up (RegionUnion1, TempK)</l>
+<l>    area_center (TempK, Area1, Row, Column)</l>
+<l>    gen_rectangle1 (RectangleL, 0, 0, Height, Column)</l>
+<l>    gen_rectangle1 (RectangleR, 0, Column, Height, Width)</l>
+<l>    intersection (RectangleL, TempK, TempKLeft)</l>
+<l>    difference (TempKLeft, LeftNull, KL)</l>
+<l>    intersection (RectangleR, TempK, TempKRight)</l>
+<l>    difference (TempKRight, RightNull, KR)</l>
+<l>    union2(KL, KR, K)</l>
+<c></c>
+<l>*     dev_display (SX)</l>
+<l>*     dev_display (TempK)</l>
+<l>*     dev_display (SX)</l>
+<l>*     dev_display (K)</l>
+<c>    *</c>
+<c>    </c>
+<l>    get_region_points (K, Rows1, Columns1)</l>
+<l>    get_grayval (SX0, Rows1, Columns1, Grayval1)</l>
+<l>    set_grayval (SX, Rows1, Columns1, Grayval1+2*rad(180)*Index)</l>
+<l>*     dev_display (SX)</l>
+<l>*     dev_display (K)</l>
+<c>    </c>
+<l>endfor</l>
+<c></c>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="UnwrapX4">
+<parameters>
+<parameter id="WrapPhaseW"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetCurvature">
+<interface>
+<io>
+<par name="All8Images" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="CXCX" base_type="iconic" dimension="0"/>
+<par name="CYCY" base_type="iconic" dimension="0"/>
+<par name="CXCY" base_type="iconic" dimension="0"/>
+<par name="WrapPhaseX" base_type="iconic" dimension="0"/>
+<par name="WrapPhaseY" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<c>* load images</c>
+<l>convert_image_type (All8Images, All8Images, 'real')</l>
+<c></c>
+<l>select_obj (All8Images, WImages, [1,2,3,4])</l>
+<l>select_obj (All8Images, HImages, 4+[1,2,3,4])</l>
+<c></c>
+<l>get_image_size (All8Images, Width, Height)</l>
+<l>MoveStep := 1</l>
+<l>hom_mat2d_identity (HomMat2DIdentity)</l>
+<l>hom_mat2d_translate_local (HomMat2DIdentity, 0, MoveStep, HomX1)</l>
+<l>hom_mat2d_translate_local (HomMat2DIdentity, MoveStep, 0, HomY1)</l>
+<c>* 包裹相位 *********************************************************************************</c>
+<l>select_obj (WImages, I1, 4)</l>
+<l>select_obj (WImages, I2, 3)</l>
+<l>select_obj (WImages, I3, 2)</l>
+<l>select_obj (WImages, I4, 1)</l>
+<c></c>
+<l>concat_obj (I1, I2, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I3, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I4, I1s)</l>
+<l>concat_obj (I2, I3, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I4, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I1, I2s)</l>
+<l>concat_obj (I3, I4, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I1, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I2, I3s)</l>
+<l>concat_obj (I4, I1, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I2, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I3, I4s)</l>
+<c></c>
+<l>sub_image (I4s, I2s, ImageSub42, -1, 0)</l>
+<l>sub_image (I1s, I3s, ImageSub13, 1, 0)</l>
+<l>atan2_image (ImageSub42, ImageSub13, WrapPhaseX)</l>
+<c></c>
+<l>* select_obj (WrapPhaseS, WrapPhase1, 1)</l>
+<l>* select_obj (WrapPhaseS, WrapPhase2, 2)</l>
+<l>* select_obj (WrapPhaseS, WrapPhase3, 3)</l>
+<l>* select_obj (WrapPhaseS, WrapPhase4, 4)</l>
+<c>* 求导*********************************************************************************</c>
+<l>affine_trans_image (WrapPhaseX, MoveX, HomX1, 'constant', 'false')</l>
+<l>sub_image (MoveX, WrapPhaseX, DiffX, 1, 0)</l>
+<c></c>
+<l>select_obj (DiffX, Sobel1, 1)</l>
+<l>select_obj (DiffX, Sobel2, 2)</l>
+<l>select_obj (DiffX, Sobel3, 3)</l>
+<l>select_obj (DiffX, Sobel4, 4)</l>
+<c></c>
+<c>* 取1 2 3 4 四个通道的中值</c>
+<l>min_image (Sobel1, Sobel3, ImageMin13)</l>
+<l>min_image (Sobel2, Sobel4, ImageMin24)</l>
+<l>max_image (Sobel1, Sobel3, ImageMax13)</l>
+<l>max_image (Sobel2, Sobel4, ImageMax24)</l>
+<l>min_image (ImageMin13, ImageMin24, Sort1)</l>
+<l>max_image (ImageMin13, ImageMin24, Sort2)</l>
+<l>min_image (ImageMax13, ImageMax24, Sort3)</l>
+<l>max_image (ImageMax13, ImageMax24, Sort4)</l>
+<c></c>
+<l>add_image (Sort2, Sort3, ImageResult, 0.5, 0)</l>
+<l>mean_image (ImageResult, CXCX, 3, 3)</l>
+<l>* min_image (ImageMin24, ImageMin, CXCX)</l>
+<c>* CXCY*********************************************************************************</c>
+<l>affine_trans_image (WrapPhaseX, MoveY, HomY1, 'constant', 'false')</l>
+<l>sub_image (MoveY, WrapPhaseX, DiffX, 1, 0)</l>
+<c></c>
+<l>select_obj (DiffX, Sobel1, 1)</l>
+<l>select_obj (DiffX, Sobel2, 2)</l>
+<l>select_obj (DiffX, Sobel3, 3)</l>
+<l>select_obj (DiffX, Sobel4, 4)</l>
+<c>* 取1 2 3 4 四个通道的中值</c>
+<l>min_image (Sobel1, Sobel3, ImageMin13)</l>
+<l>min_image (Sobel2, Sobel4, ImageMin24)</l>
+<l>max_image (Sobel1, Sobel3, ImageMax13)</l>
+<l>max_image (Sobel2, Sobel4, ImageMax24)</l>
+<l>min_image (ImageMin13, ImageMin24, Sort1)</l>
+<l>max_image (ImageMin13, ImageMin24, Sort2)</l>
+<l>min_image (ImageMax13, ImageMax24, Sort3)</l>
+<l>max_image (ImageMax13, ImageMax24, Sort4)</l>
+<c></c>
+<l>add_image (Sort2, Sort3, ImageResult, 0.5, 0)</l>
+<l>mean_image (ImageResult, CXCY, 3, 3)</l>
+<l>* scale_image_range (CXCY, CXCY, -3, 3)</l>
+<c>* *********************************************************************************</c>
+<c>* HImages</c>
+<c>* 包裹相位 *********************************************************************************</c>
+<l>select_obj (HImages, I1, 4)</l>
+<l>select_obj (HImages, I2, 3)</l>
+<l>select_obj (HImages, I3, 2)</l>
+<l>select_obj (HImages, I4, 1)</l>
+<c></c>
+<l>concat_obj (I1, I2, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I3, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I4, I1s)</l>
+<l>concat_obj (I2, I3, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I4, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I1, I2s)</l>
+<l>concat_obj (I3, I4, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I1, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I2, I3s)</l>
+<l>concat_obj (I4, I1, ObjectsConcat)</l>
+<l>concat_obj (ObjectsConcat, I2, ObjectsConcat1)</l>
+<l>concat_obj (ObjectsConcat1, I3, I4s)</l>
+<l>sub_image (I4s, I2s, ImageSub42, -1, 0)</l>
+<l>sub_image (I1s, I3s, ImageSub13, 1, 0)</l>
+<l>atan2_image (ImageSub42, ImageSub13, WrapPhaseY)</l>
+<c>* 求导*********************************************************************************</c>
+<l>affine_trans_image (WrapPhaseY, MoveY, HomY1, 'constant', 'false')</l>
+<l>sub_image (MoveY, WrapPhaseY, DiffY, 1, 0)</l>
+<c></c>
+<l>select_obj (DiffY, Sobel1, 1)</l>
+<l>select_obj (DiffY, Sobel2, 2)</l>
+<l>select_obj (DiffY, Sobel3, 3)</l>
+<l>select_obj (DiffY, Sobel4, 4)</l>
+<c>* 取1 2 3 4 四个通道的中值</c>
+<l>min_image (Sobel1, Sobel3, ImageMin13)</l>
+<l>min_image (Sobel2, Sobel4, ImageMin24)</l>
+<l>max_image (Sobel1, Sobel3, ImageMax13)</l>
+<l>max_image (Sobel2, Sobel4, ImageMax24)</l>
+<l>min_image (ImageMin13, ImageMin24, Sort1)</l>
+<l>max_image (ImageMin13, ImageMin24, Sort2)</l>
+<l>min_image (ImageMax13, ImageMax24, Sort3)</l>
+<l>max_image (ImageMax13, ImageMax24, Sort4)</l>
+<c></c>
+<l>add_image (Sort2, Sort3, ImageResult, 0.5, 0)</l>
+<l>mean_image (ImageResult, CYCY, 3, 3)</l>
+<l>add_image (CYCY, CYCY, CYCY, -0.5, 0)</l>
+<c>* *********************************************************************************</c>
+<c></c>
+<c>* **相位转曲率，Z轴加负号 CXCX to ZXZX</c>
+<l>K:=1/40.0</l>
+<l>div_image (CXCX, CXCX, ZXZX, -K, 0)</l>
+<l>div_image (CYCY, CYCY, ZYZY, -K, 0)</l>
+<l>div_image (CXCY, CXCY, ZXZY1, -K, 0)</l>
+<l>div_image (ZXZY1, ZXZY1, ZXZY, -K, 0)</l>
+<c>* CurvatureMin</c>
+<l>add_image (ZXZY, ZXZY, ZXZY_I, -0.5, 0)</l>
+<l>min_image (ZXZY, ZXZY_I, MinCXCY)</l>
+<l>min_image (ZXZX, ZYZY, MinX2Y2)</l>
+<l>min_image (MinX2Y2, MinCXCY, ImageMin)</l>
+<l>mean_image (ImageMin, CurMin, 3, 3)</l>
+<c>* CurvatureMax</c>
+<l>max_image (ZXZY, ZXZY_I, MaxCXCY)</l>
+<l>max_image (ZXZX, ZYZY, MaxX2Y2)</l>
+<l>max_image (MaxX2Y2, MaxCXCY, ImageMax)</l>
+<l>mean_image (ImageMax, CurMax, 3, 3)</l>
+<c>* *******************************************</c>
+<c>* CurvatureMean</c>
+<l>add_image (ZXZX, ZYZY, CurMean, 0.5, 0)</l>
+<c>* CurvMax_min</c>
+<l>* sub_image (CurMax, ImageMin, CurvMax_min, 1, 0)</l>
+<l>* stop ()</l>
+<l>add_image (CXCX, CYCY, CurMean, 0.5, 0)</l>
+<l>intensity (CurMean, CurMean, Mean, Deviation)</l>
+<l>scale_image_range (CurMean, ImageScaled, Mean-Deviation, Mean+Deviation)</l>
+<l>return ()</l>
+<c></c>
+</body>
+<docu id="GetCurvature">
+<parameters>
+<parameter id="All8Images"/>
+<parameter id="CXCX"/>
+<parameter id="CXCY"/>
+<parameter id="CYCY"/>
+<parameter id="WrapPhaseX"/>
+<parameter id="WrapPhaseY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="FitYupleLine">
+<interface>
+<ic>
+<par name="Mx" base_type="ctrl" dimension="0"/>
+<par name="My" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Newy" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>gen_contour_polygon_xld(Contour, My, Mx)</l>
+<c>* y = ax + b </c>
+<c>* y1 = ax1 + b</c>
+<c>* y2 = ax2 + b</c>
+<c>* ... .......</c>
+<c>* yn = ax + b</c>
+<c> </c>
+<c>*     x              beta              y</c>
+<c>*  ---    ---                      ---   ---</c>
+<c>*  |  x1  1 |       ---  ---       |  y1   |</c>
+<c>*  |  x2  1 |       |  a   |       |  y2   | </c>
+<c>*  |  x3  1 |       |  b   |       |  y3   |</c>
+<c>*  |  .   . |       ---- ---       |   .   |</c>
+<c>*  |  .   . |                      |   .   |</c>
+<c>*  |  xn  1 |                      |  yn   |</c>
+<c>*  ----   ---                      ----  ---</c>
+<l>tuple_length(Mx,len)</l>
+<l>create_matrix(len,1,My,y)</l>
+<l>create_matrix(len,2,1,x)</l>
+<l>set_value_matrix(x, [0:len-1], gen_tuple_const(len, 0),Mx)</l>
+<c> </c>
+<c>*    XT 代表X的转置   inv(*)代表*的逆</c>
+<c>*    x beta = y   </c>
+<c>*    xT x beta  = xT y </c>
+<c>*    beta =  inv( xT x)  xT y</c>
+<c> </c>
+<l>mult_matrix(x,x,'ATB',xtx)</l>
+<l>mult_matrix(x,y,'ATB',xty)</l>
+<c> </c>
+<l>invert_matrix(xtx,'general', 0, invxtx)</l>
+<c> </c>
+<l>mult_matrix(invxtx,xty,'AB', beta)</l>
+<c> </c>
+<l>get_full_matrix(beta, Values)</l>
+<c> </c>
+<l>Newy:=Values[0] * Mx + Values[1]</l>
+<c> </c>
+<l>gen_contour_polygon_xld(Contour1, Newy, Mx)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="FitYupleLine">
+<parameters>
+<parameter id="Mx"/>
+<parameter id="My"/>
+<parameter id="Newy"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GenPseudoColor">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="PseudoColor" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<c></c>
+<c></c>
+<c>***伪彩色 [170,0]蓝绿红</c>
+<l>scale_image_max (Image, ImageScaleMax)</l>
+<c>**255~0</c>
+<l>invert_image (ImageScaleMax, ImageInvert)</l>
+<c>**170~0</c>
+<l>add_image (ImageInvert, ImageInvert, H, 1/3.0, 0)</l>
+<c>*</c>
+<l>gen_image_proto (H, S, 255)</l>
+<l>trans_to_rgb (H,S,S, R, G, B, 'hsv')</l>
+<l>compose3 (R, G, B, PseudoColor)</l>
+<c>********************</c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GenPseudoColor">
+<parameters>
+<parameter id="Image"/>
+<parameter id="PseudoColor"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
